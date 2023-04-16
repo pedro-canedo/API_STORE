@@ -1,8 +1,10 @@
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.app.models import Order, OrderItem
 from src.app.schemas.order import OrderCreate
+from sqlalchemy.orm import joinedload
 from sqlalchemy import select
+from sqlalchemy import select
+from src.app.models import Order, OrderItem
 
 def create_order(db: AsyncSession, order: OrderCreate):
     db_order = Order(**order.dict())
@@ -17,7 +19,11 @@ def create_order(db: AsyncSession, order: OrderCreate):
     return db_order
 
 def get_orders_by_user_id(db: AsyncSession, user_id: int):
-    stmt = select(Order).filter(Order.user_id == user_id)
+    stmt = (
+        select(Order)
+        .filter(Order.user_id == user_id)
+        .options(joinedload(Order.items).joinedload(OrderItem.product))
+    )
     result = db.execute(stmt)
     return result.scalars().all()
 
@@ -26,6 +32,7 @@ def get_orders_by_date_range(db: AsyncSession, user_id: int, start_date: datetim
         select(Order)
         .filter(Order.user_id == user_id)
         .filter(Order.order_date.between(start_date, end_date))
+        .options(joinedload(Order.items).joinedload(OrderItem.product))
     )
     result = db.execute(stmt)
     return result.scalars().all()
