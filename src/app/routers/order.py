@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.crud import order as order_crud
 from src.app.schemas import order as order_schema
 from src.app.models import User
-from src.app.deps.auth import get_current_active_user, get_current_user
+from src.app.deps.auth import get_current_admin_user, get_current_user
 from src.app.database.database import get_db
 from typing import List
 
@@ -26,9 +26,10 @@ async def update_order_status(
     order_id: int,
     status: order_schema.OrderStatus,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_admin_user),
 ):
     return await order_crud.update_order_status(db, order_id, status.value)
+
 
 
 @router.get("/date-range", response_model=List[order_schema.Order])

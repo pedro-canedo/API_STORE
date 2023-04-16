@@ -4,8 +4,7 @@ from fastapi import HTTPException
 from src.app.crud import product as product_crud
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.schemas.order import OrderCreate
-from sqlalchemy.orm import joinedload
-from sqlalchemy import select
+from sqlalchemy.orm import joinedload, subqueryload
 from sqlalchemy import select
 from src.app.models import Order, OrderItem
 
@@ -47,10 +46,11 @@ def get_orders_by_user_id(db: AsyncSession, user_id: int):
     stmt = (
         select(Order)
         .filter(Order.user_id == user_id)
-        .options(joinedload(Order.items).joinedload(OrderItem.product))
+        .options(subqueryload(Order.items).subqueryload(OrderItem.product))
     )
     result = db.execute(stmt)
     return result.scalars().all()
+
 
 def get_orders_by_date_range(db: AsyncSession, user_id: int, start_date: datetime, end_date: datetime):
     stmt = (
