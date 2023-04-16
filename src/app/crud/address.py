@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.app.models import Address
 from src.app.schemas.address import AddressCreate, AddressUpdate
 
-def get_addresses(db: Session, user_id: int) -> List[Address]:
+def get_addresses_by_user_id(db: Session, user_id: int) -> List[Address]:
     return db.query(Address).filter(Address.user_id == user_id).all()
 
 def get_address_by_id(db: Session, address_id: int) -> Address:

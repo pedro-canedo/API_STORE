@@ -1,8 +1,9 @@
 import jwt
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.app.crud.users import get_user_by_email, password_compare, password_encode
-from src.app.deps.auth import create_access_token, get_current_user
+from src.app.crud.users import get_all_users, get_user_by_email, password_compare, password_encode
+from src.app.deps.auth import create_access_token, get_current_admin_user, get_current_user
 from src.app.schemas import user as user_schema
 from src.app.models import User
 import os
@@ -25,6 +26,13 @@ def create_user(user: user_schema.UserCreate, db: AsyncSession = Depends(get_db)
     db.commit()
     db.refresh(db_user)
     return db_user
+
+@router.get("/all-users", response_model=List[user_schema.User])
+def list_users(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_admin_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    users = get_all_users(db)
+    return users
 
 
 @router.post("/login")

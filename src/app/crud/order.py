@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from src.app.crud import product as product_crud
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.schemas.order import OrderCreate
+from sqlalchemy import func
 from sqlalchemy.orm import joinedload, subqueryload
 from sqlalchemy import select
 from src.app.models import Order, OrderItem
@@ -52,15 +53,19 @@ def get_orders_by_user_id(db: AsyncSession, user_id: int):
     return result.scalars().all()
 
 
-def get_orders_by_date_range(db: AsyncSession, user_id: int, start_date: datetime, end_date: datetime):
+def get_orders_by_date_range(db: AsyncSession, start_date: datetime, end_date: datetime):
     stmt = (
         select(Order)
-        .filter(Order.user_id == user_id)
-        .filter(Order.order_date.between(start_date, end_date))
-        .options(joinedload(Order.items).joinedload(OrderItem.product))
+        .filter(
+            Order.order_date.between(
+                func.date(start_date) + func.current_time(),
+                func.date(end_date) + func.current_time()
+            )
+        )
     )
     result = db.execute(stmt)
     return result.scalars().all()
+
 
 def get_order(db: AsyncSession, order_id: int):
     return db.query(Order).filter(Order.id == order_id).first()

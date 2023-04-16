@@ -32,8 +32,11 @@ def load_access_token(token: str):
         return user_id
     except:
         return None
-
-
+    
+def get_all_users(db: AsyncSession):
+    stmt = select(User)
+    result = db.execute(stmt)
+    return result.scalars().all()
 
 def password_encode(password: str):
     return bcrypt.hash(password)
