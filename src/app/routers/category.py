@@ -4,7 +4,7 @@ from src.app.crud.category import create_category, get_category, get_categories,
 from typing import List
 from src.app.schemas.category import Category, CategoryCreate
 from src.app.models import User
-from src.app.auth import get_current_user
+from src.app.deps.auth import get_current_user
 from src.app.database.database import get_db
 
 router = APIRouter()

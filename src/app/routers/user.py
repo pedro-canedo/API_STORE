@@ -2,7 +2,7 @@ import jwt
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.crud.users import get_user_by_email, password_compare, password_encode
-from src.app.auth import create_access_token, get_current_user
+from src.app.deps.auth import create_access_token, get_current_user
 from src.app.schemas import user as user_schema
 from src.app.models import User
 import os

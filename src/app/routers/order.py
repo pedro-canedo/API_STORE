@@ -4,20 +4,32 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.crud import order as order_crud
 from src.app.schemas import order as order_schema
 from src.app.models import User
-from src.app.auth import get_current_user
+from src.app.deps.auth import get_current_active_user, get_current_user
 from src.app.database.database import get_db
 from typing import List
 
 router = APIRouter()
 
 @router.post("/", response_model=order_schema.Order)
-def create_order(order: order_schema.OrderCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    order.user_id = current_user.id
-    return order_crud.create_order(db, order)
+def create_order(order: order_schema.OrderCreateInput, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return order_crud.create_order(db, order, current_user_id=current_user.id)
+
+
 
 @router.get("/", response_model=List[order_schema.Order])
 def list_orders(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     return order_crud.get_orders_by_user_id(db, current_user.id)
+
+
+@router.put("/orders/{order_id}/status", response_model=order_schema.Order, tags=["orders"])
+async def update_order_status(
+    order_id: int,
+    status: order_schema.OrderStatus,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    return await order_crud.update_order_status(db, order_id, status.value)
+
 
 @router.get("/date-range", response_model=List[order_schema.Order])
 def list_orders_by_date_range(start_date: datetime, end_date: datetime, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):

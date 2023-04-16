@@ -31,4 +31,6 @@ def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(oa
         return user
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Token inválido")
+    
+def is_admin
 

@@ -21,7 +21,7 @@ def create_product(db: AsyncSession, product: ProductCreate):
 def get_product(db: AsyncSession, product_id: int):
     return db.query(Product).filter(Product.id == product_id).first()
 
-def get_productes(db: AsyncSession, product_id: int):
+def get_productes(db: AsyncSession):
     return db.query(Product).all()
 
 def update_product(db: AsyncSession, product_id: int, updated_product: ProductCreate):

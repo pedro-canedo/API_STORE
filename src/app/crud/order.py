@@ -1,4 +1,7 @@
 from datetime import datetime
+from src.app.schemas import order as order_schema
+from fastapi import HTTPException
+from src.app.crud import product as product_crud
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.schemas.order import OrderCreate
 from sqlalchemy.orm import joinedload
@@ -6,17 +9,39 @@ from sqlalchemy import select
 from sqlalchemy import select
 from src.app.models import Order, OrderItem
 
-def create_order(db: AsyncSession, order: OrderCreate):
-    db_order = Order(**order.dict())
-    db.add(db_order)
-    db.flush()
+def create_order(db: AsyncSession, order: order_schema.OrderCreateInput, current_user_id: int):
+    # Calcular o preço dos itens
+    items = []
+    for item_input in order.items:
+        product = product_crud.get_product(db, item_input.product_id)
+        if product is None:
+            raise HTTPException(status_code=404, detail=f"Produto com ID {item_input.product_id} não encontrado")
+        price = product.price * item_input.quantity
+        item = OrderItem(product_id=item_input.product_id, price=price, quantity=item_input.quantity)
+        items.append(item)
 
-    for item in order.items:
-        db_item = OrderItem(order_id=db_order.id, **item.dict())
-        db.add(db_item)
+    db_order = Order(
+        user_id=current_user_id,
+        address_id=order.address_id,
+        status="Pendente",
+        order_date=order.order_date,
+        items=items
+    )
+
+    db.add(db_order)
     db.commit()
     db.refresh(db_order)
     return db_order
+
+def update_order_status(db: AsyncSession, order_id: int, new_status: str):
+    db_order = db.query(Order).filter(Order.id == order_id).first()
+    if db_order is None:
+        raise HTTPException(status_code=404, detail=f"Pedido com ID {order_id} não encontrado")
+    db_order.status = new_status
+    db.commit()
+    db.refresh(db_order)
+    return db_order
+
 
 def get_orders_by_user_id(db: AsyncSession, user_id: int):
     stmt = (

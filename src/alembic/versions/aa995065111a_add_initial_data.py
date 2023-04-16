@@ -10,13 +10,13 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.sql import table, column
 
+from src.app.crud.users import password_encode
+
 # revision identifiers, used by Alembic.
 revision = 'aa995065111a'
 down_revision = None
 branch_labels = None
 depends_on = None
-
-
 
 def upgrade():
     # Tabela users temporária para inserção de dados
@@ -55,7 +55,7 @@ def upgrade():
     op.bulk_insert(
         users,
         [
-            {"id": 1, "name": "Pedro", "email": "pedro@email.com", "password_hash": "hashed_password"},
+            {"id": 1, "name": "Pedro", "email": "pedro@teste.com", "password_hash": password_encode('teste')},
         ],
     )
 

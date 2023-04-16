@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.crud.cep import get_address_by_postal_code
 from src.app.schemas.address import AddressFromCEP
 from src.app.models import User
-from src.app.auth import get_current_user
+from src.app.deps.auth import get_current_user
 from src.app.database.database import get_db
 
 router = APIRouter()
