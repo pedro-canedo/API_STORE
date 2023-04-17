@@ -30,6 +30,12 @@ def update_order_status(
 ):
     return order_crud.update_order_status(db, order_id, status.value)
 
+@router.get("/{order_id}/details", response_model=order_schema.OrderDetail)
+def get_order_details_endpoint(order_id: int, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    db_order_details = order_crud.get_order_details(db, order_id, user_id=current_user.id)
+    if not db_order_details:
+        raise HTTPException(status_code=404, detail="Detalhes do pedido não encontrado")
+    return db_order_details
 
 
 @router.get("/date-range", response_model=List[order_schema.Order])

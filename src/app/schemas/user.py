@@ -2,7 +2,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
-
 from .address import Address
 
 class UserBase(BaseModel):
@@ -22,3 +21,10 @@ class User(UserBase):
 class TokenData(BaseModel):
     user_id: int
     expire: datetime
+
+class UserAddress(BaseModel):
+    street: str
+    city: str
+    state: str
+    country: str
+    zip_code: str

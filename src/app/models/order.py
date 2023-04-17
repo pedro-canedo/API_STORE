@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Numeric, DateTime, T
 from sqlalchemy.orm import relationship
 from src.app.database.database import Base
 
+
 class Order(Base):
     __tablename__ = "orders"
 
@@ -14,10 +15,11 @@ class Order(Base):
     __table_args__ = (
         CheckConstraint(status.in_(["Pendente", "Pago", "Enviado", "Entregue", "Cancelado"])),
     )
-
+    
     user = relationship("User", back_populates="orders")
     address = relationship("Address", back_populates="orders")
     items = relationship("OrderItem", back_populates="order")
+
 
 
 class OrderItem(Base):

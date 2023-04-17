@@ -18,7 +18,7 @@ router = APIRouter()
 def create_user(user: user_schema.UserCreate, db: AsyncSession = Depends(get_db)):
     db_user = get_user_by_email(user.email, db)
     if db_user:
-        raise HTTPException(status_code=400, detail="Email já cadastrado")
+        raise HTTPException(status_code=400, detail=f"Email {user.email} já cadastrado")
     hashed_password = password_encode(user.password)
     db_user = User(name=user.name, email=user.email,
                    password_hash=hashed_password)

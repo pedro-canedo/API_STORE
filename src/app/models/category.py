@@ -9,3 +9,4 @@ class Category(Base):
     name = Column(String(255), unique=True, nullable=False)
 
     products = relationship("Product", secondary="products_categories", back_populates="categories")
+    
