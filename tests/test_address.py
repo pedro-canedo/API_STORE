@@ -4,6 +4,10 @@ from src.app.schemas.address import Address, AddressCreate, AddressUpdate
 
 class TestAddressSchemas(unittest.TestCase):
     def test_address_create(self):
+        """
+        Testa a criação de um objeto AddressCreate com base nos dados fornecidos.
+        Verifica se os atributos do objeto criado correspondem aos valores esperados.
+        """
         address_data = {
             "description": "Casa",
             "postal_code": "12345678",
@@ -23,6 +27,11 @@ class TestAddressSchemas(unittest.TestCase):
         self.assertEqual(address.state, "SP")
 
     def test_address(self):
+        """
+        Testa a criação de um objeto Address com base nos dados fornecidos.
+        Verifica se os atributos do objeto criado correspondem aos valores esperados,
+        incluindo o atributo adicional 'user_id'.
+        """
         address_data = {
             "id": 1,
             "description": "Casa",
@@ -46,6 +55,10 @@ class TestAddressSchemas(unittest.TestCase):
         self.assertEqual(address.user_id, 1)
 
     def test_address_update(self):
+        """
+        Testa a criação de um objeto AddressUpdate com base nos dados fornecidos.
+        Verifica se os atributos do objeto criado correspondem aos valores esperados.
+        """
         address_data = {
             "description": "Casa",
             "postal_code": "12345678",

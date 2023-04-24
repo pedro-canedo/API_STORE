@@ -1,10 +1,10 @@
-psycopg2-binary==2.9.6
-python-jose[cryptography]
-passlib[bcrypt]
-bcrypt==4.0.1     
-cryptography==40.0.2
-Faker==18.4.0
-fastapi==0.95.1
+psycopg2-binary==2.9.6 #dependência do postgress
+python-jose[cryptography] #trabalhar com JWT
+passlib[bcrypt] #encriptar senhas
+bcrypt==4.0.1 #encriptar senhas como hash
+cryptography==40.0.2 #criptografia de dados
+Faker==18.4.0 #gerar dados moks
+fastapi==0.95.1 #Framwork de construção de API's
 httpx==0.24.0
 pydantic==1.10.7
 PyJWT==2.6.0
